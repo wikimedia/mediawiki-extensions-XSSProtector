@@ -1,5 +1,4 @@
 <?php
-// Copied from MW core 865e50ca8f9a6 + additional hooks.
 /**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -363,17 +362,19 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 
 		// Since 1.35, the key 'titlevalue' is set, instead of 'titlestr'.
 		if ( isset( $data['titlevalue'] ) ) {
-			$this->contextPage = PageReferenceValue::localReference(
+			$this->contextPage = new PageReferenceValue(
 				$data['titlevalue'][0],
-				$data['titlevalue'][1]
+				$data['titlevalue'][1],
+				PageReference::LOCAL
 			);
 		} elseif ( isset( $data['titlestr'] ) ) {
 			$titleParser = MediaWikiServices::getInstance()->getTitleParser();
 			$title = $titleParser->parseTitle( $data['titlestr'] );
 			// The title should not have any fragment or interwiki parts
-			$this->contextPage = PageReferenceValue::localReference(
+			$this->contextPage = new PageReferenceValue(
 				$title->getNamespace(),
-				$title->getDBkey()
+				$title->getDBkey(),
+				PageReference::LOCAL
 			);
 		} else {
 			$this->contextPage = null;
@@ -1117,6 +1118,7 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 		}
 		$hc->run( $hookName, [ &$string ] );
 		// END modifications.
+
 
 		return $string;
 	}
