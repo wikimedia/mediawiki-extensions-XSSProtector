@@ -1,0 +1,48 @@
+{
+	"name": "XSSProtector",
+	"version": "1.0",
+	"author": [
+		"Brian Wolff"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:XSSProtector",
+	"description": "Extension to add an extra layer of protection against XSS attacks",
+	"requires": {
+		"MediaWiki": ">= 1.45"
+	},
+	"license-name": "GPL-2.0-or-later",
+	"type": "other",
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\XSSProtector\\": "src/"
+	},
+	"Hooks": {
+		"AfterFinalPageOutput": "main",
+		"BeforePageDisplay": "main",
+		"OutputPageBeforeHTML": "main",
+		"XSSProtectorMsgText": "main",
+		"XSSProtectorMsgHtml": "main"
+	},
+	"HookHandlers": {
+		"main": {
+			"class": "MediaWiki\\Extension\\XSSProtector\\Hooks",
+			"services": [
+				"MainConfig"
+			]
+		}
+	},
+	"config": {
+		"XSSProtectorScriptless": {
+			"value": true,
+			"description": "Attempt to prevent scriptless XSS (Higher risk of clashing with extensions for not that much value). Disables <form> and <meta> tags."
+		},
+		"XSSProtectorReplaceMessage": {
+			"value": true,
+			"description": "Disable dynamic replacement of Message class. This reduces protection but may be required for compatibility sometimes."
+		},
+		"XSSProtectorLaxSpecialPage": {
+			"value": false,
+			"description": "Don't process the HTML parts of special pages"
+		}
+	},
+	"callback": "MediaWiki\\Extension\\XSSProtector\\Hooks::setup",
+	"manifest_version": 2
+}
