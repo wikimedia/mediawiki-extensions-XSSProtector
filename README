@@ -1,0 +1,9 @@
+Experimental extension to provide an extra layer of defense against XSS.
+
+The goal is to find a minimal CSP policy that provides some real protection
+while also being minimally disruptive.
+
+This is only compatible with extensions that follow MediaWiki conventions
+and use ResourceLoader for javascript (or at least ->addHeadItem()).
+
+See https://www.mediawiki.org/wiki/Extension:XSSProtector for more details.
