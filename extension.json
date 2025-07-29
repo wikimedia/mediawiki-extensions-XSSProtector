@@ -1,13 +1,13 @@
 {
 	"name": "XSSProtector",
-	"version": "1.0",
+	"version": "1.0-REL1_43",
 	"author": [
 		"Brian Wolff"
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:XSSProtector",
 	"description": "Extension to add an extra layer of protection against XSS attacks",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.43"
 	},
 	"license-name": "GPL-2.0-or-later",
 	"type": "other",
