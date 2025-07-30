@@ -24,8 +24,8 @@ class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPa
 	 */
 	public function onAfterFinalPageOutput( $out ): void {
 		$resp = $out->getRequest()->response();
-		// Unfortunately javascript: URLs are controlled by script-src-elem.
-		// Ideally we would really like to block them.
+		// We also add a meta tag "script-src-elem *" to block
+		// unsafe-inline after page load.
 		$policy = "script-src-attr 'none';";
 		if ( $this->config->get( 'XSSProtectorScriptless' ) ) {
 			$policy .= "base-uri 'none';";
@@ -56,6 +56,7 @@ class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPa
 	 * @inheritDoc
 	 */
 	public function onBeforePageDisplay( $out, $skin ): void {
+		$out->addModules( 'ext.XSSProtector.init' );
 		if ( ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) ) {
 			if ( MediaWikiServices::getInstance()
 				->get( 'MobileFrontend.Context' )
@@ -105,6 +106,9 @@ class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPa
 		$text = preg_replace( '/<(script)/i', '&lt;$1', $text );
 		// This is the sketchiest part of the whole thing.
 		// Designed to hopefully have (rare) false positives but not false negatives.
+		// We use a meta tag to block javascript: uris after DOMContentLoaded fires,
+		// so even if this regex fails, attackers have only a limited opportunity to
+		// convince someone to click on the link.
 		$text = preg_replace(
 			'@(href[\0\t\f\n\r ]*+)=(?![\0\t\f\n\r ]*+[\'"]?(?:[a-ik-z0-9/]|[^:\'"/]++[\'"/]))@i',
 			'$1&#61;',

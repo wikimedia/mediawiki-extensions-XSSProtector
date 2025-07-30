@@ -1,6 +1,6 @@
 {
 	"name": "XSSProtector",
-	"version": "1.0",
+	"version": "1.1",
 	"author": [
 		"Brian Wolff"
 	],
@@ -41,6 +41,13 @@
 		"XSSProtectorLaxSpecialPage": {
 			"value": false,
 			"description": "Don't process the HTML parts of special pages"
+		}
+	},
+	"ResourceModules": {
+		"ext.XSSProtector.init": {
+			"scripts": "ext.XSSProtector.js",
+			"localBasePath": "modules",
+			"remoteExtPath": "XSSProtector/modules"
 		}
 	},
 	"callback": "MediaWiki\\Extension\\XSSProtector\\Hooks::setup",
