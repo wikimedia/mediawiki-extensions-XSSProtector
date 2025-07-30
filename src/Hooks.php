@@ -2,12 +2,12 @@
 namespace MediaWiki\Extension\XSSProtector;
 
 use ExtensionRegistry;
-use MediaWiki\Config\Config;
+use Config;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
-use MediaWiki\Output\Hook\AfterFinalPageOutputHook;
-use MediaWiki\Output\Hook\BeforePageDisplayHook;
-use MediaWiki\Output\Hook\OutputPageBeforeHTMLHook;
+use MediaWiki\Hook\AfterFinalPageOutputHook;
+use MediaWiki\Hook\BeforePageDisplayHook;
+use MediaWiki\Hook\OutputPageBeforeHTMLHook;
 use RuntimeException;
 
 class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPageBeforeHTMLHook {
