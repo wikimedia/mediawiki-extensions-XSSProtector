@@ -18,8 +18,8 @@
 		"AfterFinalPageOutput": "main",
 		"BeforePageDisplay": "main",
 		"OutputPageBeforeHTML": "main",
-		"XSSProtectorMsgText": "main",
-		"XSSProtectorMsgHtml": "main"
+		"MessagePostProcessText": "main",
+		"MessagePostProcessHtml": "main"
 	},
 	"HookHandlers": {
 		"main": {
@@ -34,10 +34,6 @@
 			"value": true,
 			"description": "Attempt to prevent scriptless XSS (Higher risk of clashing with extensions for not that much value). Disables <form> and <meta> tags."
 		},
-		"XSSProtectorReplaceMessage": {
-			"value": true,
-			"description": "Disable dynamic replacement of Message class. This reduces protection but may be required for compatibility sometimes."
-		},
 		"XSSProtectorLaxSpecialPage": {
 			"value": false,
 			"description": "Don't process the HTML parts of special pages"
@@ -50,6 +46,5 @@
 			"remoteExtPath": "XSSProtector/modules"
 		}
 	},
-	"callback": "MediaWiki\\Extension\\XSSProtector\\Hooks::setup",
 	"manifest_version": 2
 }

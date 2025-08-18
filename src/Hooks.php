@@ -4,13 +4,19 @@ namespace MediaWiki\Extension\XSSProtector;
 use ExtensionRegistry;
 use MediaWiki\Config\Config;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Message\Message;
+use MediaWiki\Message\Hook\MessagePostProcessHtmlHook;
+use MediaWiki\Message\Hook\MessagePostProcessTextHook;
 use MediaWiki\Output\Hook\AfterFinalPageOutputHook;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Output\Hook\OutputPageBeforeHTMLHook;
-use RuntimeException;
 
-class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPageBeforeHTMLHook {
+class Hooks implements
+	AfterFinalPageOutputHook,
+	BeforePageDisplayHook,
+	OutputPageBeforeHTMLHook,
+	MessagePostProcessHtmlHook,
+	MessagePostProcessTextHook
+{
 
 	private Config $config;
 
@@ -83,20 +89,16 @@ class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPa
 	}
 
 	/**
-	 * Custom hook for wfMessage plain and text formats
-	 *
-	 * @param string &$text
+	 * @inheritDoc
 	 */
-	public function onXSSProtectorMsgText( &$text ) {
+	public function onMessagePostProcessText( &$text, $format, $key ): void {
 		$text = $this->doReplacementsText( $text );
 	}
 
 	/**
-	 * Custom hook for wfMessage plain and text formats
-	 *
-	 * @param string &$text
+	 * @inheritDoc
 	 */
-	public function onXSSProtectorMsgHtml( &$text ) {
+	public function onMessagePostProcessHtml( &$text, $format, $key ): void {
 		$text = $this->doReplacementsHtml( $text );
 	}
 
@@ -157,28 +159,4 @@ class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPa
 		}
 		return $text;
 	}
-
-	/**
-	 * Registration call back
-	 *
-	 * Do evil stuff to override wfMessage
-	 */
-	public static function setup() {
-		global $wgXSSProtectorReplaceMessage;
-		// EVIL hack to replace the message class.
-		if ( $wgXSSProtectorReplaceMessage ) {
-			if ( class_exists( Message::class, false ) ) {
-				// Another extension caused this to load early.
-				// You can disable this part with $wgXSSProtectorReplaceMessage but
-				// it significantly reduces the protection.
-				throw new RuntimeException(
-					"Message class loaded too early." .
-					"Set $wgXSSProtectorReplaceMessage = false; to disable"
-				);
-			} else {
-				require_once __DIR__ . '/Message.php';
-			}
-		}
-	}
-
 }
