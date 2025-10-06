@@ -1119,7 +1119,6 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 		$hc->run( $hookName, [ &$string ] );
 		// END modifications.
 
-
 		return $string;
 	}
 
