@@ -1,0 +1,6 @@
+[
+	{
+		"resourceModule": "ext.XSSProtector.init",
+		"maxSize": "1 kB"
+	}
+]
