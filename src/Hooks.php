@@ -116,9 +116,11 @@ class Hooks implements
 		// We use a meta tag to block javascript: uris after DOMContentLoaded fires,
 		// so even if this regex fails, attackers have only a limited opportunity to
 		// convince someone to click on the link.
+		// We use \u{2060} to keep it a valid attribute. Originally we replaced
+		// the equal sign with &#61; however that allowed escaping the attribute.
 		$text = preg_replace(
-			'@(href[\0\t\f\n\r ]*+)=(?![\0\t\f\n\r ]*+[\'"]?(?:[a-ik-z0-9/]|[^:\'"/]++[\'"/]))@i',
-			'$1&#61;',
+			'@([ \t\f\n\r\0/]href[\0\t\f\n\r ]*+)=(?![\0\t\f\n\r ]*+[\'"]?(?:[a-ik-z0-9/]|[^:\'"/]++[\'"/]))@i',
+			"$1\u{2060}=",
 			$text
 		);
 		if ( $doAll && $this->config->get( 'XSSProtectorScriptless' ) ) {
@@ -150,7 +152,7 @@ class Hooks implements
 		// This is the sketchiest part of the whole thing.
 		// Designed to hopefully have (rare) false positives but not false negatives.
 		$text = preg_replace(
-			'@(href[\0\t\f\n\r ]*+)=(?![\0\t\f\n\r ]*+[\'"]?(?:[a-ik-z0-9/]|[^:\'"/]++[\'"/]))@i',
+			'@([ \t\f\n\r\0/]href[\0\t\f\n\r ]*+)=(?![\0\t\f\n\r ]*+[\'"]?(?:[a-ik-z0-9/]|[^:\'"/]++[\'"/]))@i',
 			'$1' . "\u{2060}=",
 			$text
 		);
