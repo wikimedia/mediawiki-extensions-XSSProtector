@@ -1,13 +1,13 @@
 {
 	"name": "XSSProtector",
-	"version": "1.3-REL1_39",
+	"version": "1.3-REL1_35",
 	"author": [
 		"Brian Wolff"
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:XSSProtector",
 	"description": "Extension to add an extra layer of protection against XSS attacks",
 	"requires": {
-		"MediaWiki": ">= 1.39.12"
+		"MediaWiki": ">= 1.35"
 	},
 	"license-name": "GPL-2.0-or-later",
 	"type": "other",
@@ -29,6 +29,13 @@
 			]
 		}
 	},
+	"ResourceModules": {
+		"ext.XSSProtector.init": {
+			"scripts": "ext.XSSProtector.js",
+			"localBasePath": "modules",
+			"remoteExtPath": "XSSProtector/modules"
+		}
+	},
 	"config": {
 		"XSSProtectorScriptless": {
 			"value": true,
@@ -41,13 +48,6 @@
 		"XSSProtectorLaxSpecialPage": {
 			"value": false,
 			"description": "Don't process the HTML parts of special pages"
-		}
-	},
-	"ResourceModules": {
-		"ext.XSSProtector.init": {
-			"scripts": "ext.XSSProtector.js",
-			"localBasePath": "modules",
-			"remoteExtPath": "XSSProtector/modules"
 		}
 	},
 	"callback": "MediaWiki\\Extension\\XSSProtector\\Hooks::setup",

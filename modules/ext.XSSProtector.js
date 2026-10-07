@@ -1,4 +1,4 @@
-$( () => {
+$( function () {
 	var nonce, meta;
 	// FIXUP for mw.loader.domEval
 	if ( mw.config.get( 'wgCSPNonce' ) ) {

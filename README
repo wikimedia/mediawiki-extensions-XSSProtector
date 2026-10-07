@@ -7,3 +7,11 @@ This is only compatible with extensions that follow MediaWiki conventions
 and use ResourceLoader for javascript (or at least ->addHeadItem()).
 
 See https://www.mediawiki.org/wiki/Extension:XSSProtector for more details.
+
+-----
+
+
+This is the version for 1.35. This should be considered experimental and
+not really tested. 1.35 is very old and has known vulnerabilties. This
+extension cannot protect against all vulnerability types. You should
+upgrade if you are using 1.35.
