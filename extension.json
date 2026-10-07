@@ -1,13 +1,13 @@
 {
 	"name": "XSSProtector",
-	"version": "1.3-REL1_35",
+	"version": "1.3-REL1_31",
 	"author": [
 		"Brian Wolff"
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:XSSProtector",
 	"description": "Extension to add an extra layer of protection against XSS attacks",
 	"requires": {
-		"MediaWiki": ">= 1.35"
+		"MediaWiki": ">= 1.31"
 	},
 	"license-name": "GPL-2.0-or-later",
 	"type": "other",
@@ -15,25 +15,18 @@
 		"MediaWiki\\Extension\\XSSProtector\\": "src/"
 	},
 	"Hooks": {
-		"AfterFinalPageOutput": "main",
-		"BeforePageDisplay": "main",
-		"OutputPageBeforeHTML": "main",
-		"XSSProtectorMsgText": "main",
-		"XSSProtectorMsgHtml": "main"
-	},
-	"HookHandlers": {
-		"main": {
-			"class": "MediaWiki\\Extension\\XSSProtector\\Hooks",
-			"services": [
-				"MainConfig"
-			]
-		}
+		"XSSProtectorMsgText": "MediaWiki\\Extension\\XSSProtector\\Hooks::onXSSProtectorMsgText",
+		"XSSProtectorMsgHtml": "MediaWiki\\Extension\\XSSProtector\\Hooks::onXSSProtectorMsgHtml",
+		"AfterFinalPageOutput": "MediaWiki\\Extension\\XSSProtector\\Hooks::onAfterFinalPageOutput",
+		"BeforePageDisplay": "MediaWiki\\Extension\\XSSProtector\\Hooks::onBeforePageDisplay",
+		"OutputPageBeforeHTML": "MediaWiki\\Extension\\XSSProtector\\Hooks::onOutputPageBeforeHTML"
 	},
 	"ResourceModules": {
 		"ext.XSSProtector.init": {
 			"scripts": "ext.XSSProtector.js",
 			"localBasePath": "modules",
-			"remoteExtPath": "XSSProtector/modules"
+			"remoteExtPath": "XSSProtector/modules",
+			"targets": [ "mobile", "desktop" ]
 		}
 	},
 	"config": {

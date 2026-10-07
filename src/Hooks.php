@@ -1,33 +1,23 @@
 <?php
 namespace MediaWiki\Extension\XSSProtector;
 
-use Config;
 use ExtensionRegistry;
-use MediaWiki\Hook\AfterFinalPageOutputHook;
-use MediaWiki\Hook\BeforePageDisplayHook;
-use MediaWiki\Hook\OutputPageBeforeHTMLHook;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Message\Message;
 use RuntimeException;
+use MobileContext;
 
-class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPageBeforeHTMLHook {
-
-	private Config $config;
-
-	public function __construct( Config $config ) {
-		$this->config = $config;
-	}
+class Hooks {
 
 	/**
 	 * @note Not using onBeforePageDisplay because it does not catch ?action=render.
 	 * @inheritDoc
 	 */
-	public function onAfterFinalPageOutput( $out ): void {
+	public static function onAfterFinalPageOutput( $out ) {
 		$resp = $out->getRequest()->response();
 		// We also add a meta tag "script-src-elem *" to block
 		// unsafe-inline after page load.
 		$policy = "script-src-attr 'none';";
-		if ( $this->config->get( 'XSSProtectorScriptless' ) ) {
+		if ( $wgXSSProtectorScriptless ) {
 			$policy .= "base-uri 'none';";
 			$policy .= "object-src 'none';";
 			$policy .= "form-action 'self';";
@@ -45,8 +35,8 @@ class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPa
 	 * things like $wgOut->addHtml(). It is run on ?action=view and ?action=render.
 	 * @inheritDoc
 	 */
-	public function onOutputPageBeforeHTML( $out, &$text ) {
-		$text = $this->doReplacementsHtml( $text );
+	public static function onOutputPageBeforeHTML( $out, &$text ) {
+		$text = self::doReplacementsHtml( $text );
 	}
 
 	/**
@@ -55,16 +45,15 @@ class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPa
 	 * not get called for ?action=render while the other one does.
 	 * @inheritDoc
 	 */
-	public function onBeforePageDisplay( $out, $skin ): void {
+	public static function onBeforePageDisplay( $out, $skin ) {
 		// Make sure we do <indicator>
 		// An alternative might be to hook into ParserAfterTidy
-		$indicators = array_map( [ $this, 'doReplacementsHtml' ], $out->getIndicators() );
+		$indicators = array_map( [ __CLASS__, 'doReplacementsHtml' ], $out->getIndicators() );
 		$out->setIndicators( $indicators );
 
 		$out->addModules( 'ext.XSSProtector.init' );
 		if ( ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) ) {
-			if ( MediaWikiServices::getInstance()
-				->get( 'MobileFrontend.Context' )
+			if ( MobileContext::singleton()
 				->shouldDisplayMobileView()
 			) {
 				// Mobile frontend inserts inline <script> tags
@@ -72,12 +61,12 @@ class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPa
 				return;
 			}
 		}
-		if ( $this->config->get( 'XSSProtectorLaxSpecialPage' ) ) {
+		if ( $wgXSSProtectorLaxSpecialPage ) {
 			return;
 		}
 		$text = $out->getHTML();
 		// Use the more lax approach for ->addHTML
-		$newText = $this->doReplacementsHtml( $text, false );
+		$newText = self::doReplacementsHtml( $text, false );
 		$out->clearHTML();
 		$out->addHTML( $newText );
 	}
@@ -87,8 +76,8 @@ class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPa
 	 *
 	 * @param string &$text
 	 */
-	public function onXSSProtectorMsgText( &$text ) {
-		$text = $this->doReplacementsText( $text );
+	public static function onXSSProtectorMsgText( &$text ) {
+		$text = self::doReplacementsText( $text );
 	}
 
 	/**
@@ -96,8 +85,8 @@ class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPa
 	 *
 	 * @param string &$text
 	 */
-	public function onXSSProtectorMsgHtml( &$text ) {
-		$text = $this->doReplacementsHtml( $text );
+	public static function onXSSProtectorMsgHtml( &$text ) {
+		$text = self::doReplacementsHtml( $text );
 	}
 
 	/**
@@ -107,7 +96,8 @@ class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPa
 	 * @param bool $doAll Do the scriptless stuff too
 	 * @return string
 	 */
-	private function doReplacementsHTML( string $text, $doAll = true ): string {
+	private static function doReplacementsHTML( $text, $doAll = true ) {
+		global $wgXSSProtectorScriptless;
 		$text = preg_replace( '/<(script)/i', '&lt;$1', $text );
 		// This is the sketchiest part of the whole thing.
 		// Designed to hopefully have (rare) false positives but not false negatives.
@@ -121,7 +111,7 @@ class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPa
 			"$1\u{2060}=",
 			$text
 		);
-		if ( $doAll && $this->config->get( 'XSSProtectorScriptless' ) ) {
+		if ( $doAll && $wgXSSProtectorScriptless ) {
 			// Contemplated adding <form> here, but going to rely on CSP
 			// due to risk of false positive, and not really being sufficient
 			// unless formaction attribute is also banned. The other big risk
@@ -145,7 +135,8 @@ class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPa
 	 * @param string $text
 	 * @return string
 	 */
-	private function doReplacementsText( string $text ): string {
+	private static function doReplacementsText( string $text ) {
+		global $wgXSSProtectorScriptless;
 		$text = preg_replace( '/<(script)/i', "<\u{2060}" . '$1', $text );
 		// This is the sketchiest part of the whole thing.
 		// Designed to hopefully have (rare) false positives but not false negatives.
@@ -154,7 +145,7 @@ class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPa
 			'$1' . "\u{2060}=",
 			$text
 		);
-		if ( $this->config->get( 'XSSProtectorScriptless' ) ) {
+		if ( $wgXSSProtectorScriptless ) {
 			$text = preg_replace( '/<(meta|base)/i', "<\u{2060}" . '$1', $text );
 		}
 		return $text;
