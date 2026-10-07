@@ -5,6 +5,7 @@ use ExtensionRegistry;
 use MediaWiki\MediaWikiServices;
 use RuntimeException;
 use MobileContext;
+use Message;
 
 class Hooks {
 
