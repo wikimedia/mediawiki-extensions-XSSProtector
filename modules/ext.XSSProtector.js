@@ -20,6 +20,6 @@ $( () => {
 	// javascript link really fast.
 	meta = document.createElement( 'meta' );
 	meta.httpEquiv = 'Content-Security-Policy';
-	meta.content = "script-src-elem 'nonce-" + nonce + "'" ;
+	meta.content = "script-src-elem 'strict-dynamic' 'nonce-" + nonce + "'" ;
 	document.head.appendChild( meta );
 } );
