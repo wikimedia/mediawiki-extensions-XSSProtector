@@ -14,6 +14,7 @@ class Hooks {
 	 * @inheritDoc
 	 */
 	public static function onAfterFinalPageOutput( $out ) {
+		global $wgXSSProtectorScriptless;
 		$resp = $out->getRequest()->response();
 		// We also add a meta tag "script-src-elem *" to block
 		// unsafe-inline after page load.
@@ -47,6 +48,7 @@ class Hooks {
 	 * @inheritDoc
 	 */
 	public static function onBeforePageDisplay( $out, $skin ) {
+		global $wgXSSProtectorLaxSpecialPage;
 		// Make sure we do <indicator>
 		// An alternative might be to hook into ParserAfterTidy
 		$indicators = array_map( [ __CLASS__, 'doReplacementsHtml' ], $out->getIndicators() );
