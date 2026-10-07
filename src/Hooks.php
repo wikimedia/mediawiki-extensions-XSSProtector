@@ -7,7 +7,7 @@ use MediaWiki\Hook\AfterFinalPageOutputHook;
 use MediaWiki\Hook\BeforePageDisplayHook;
 use MediaWiki\Hook\OutputPageBeforeHTMLHook;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Message\Message;
+use Message;
 use RuntimeException;
 
 class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPageBeforeHTMLHook {
