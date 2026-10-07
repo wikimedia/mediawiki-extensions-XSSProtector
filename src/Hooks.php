@@ -58,7 +58,7 @@ class Hooks implements AfterFinalPageOutputHook, BeforePageDisplayHook, OutputPa
 	public function onBeforePageDisplay( $out, $skin ): void {
 		// Make sure we do <indicator>
 		// An alternative might be to hook into ParserAfterTidy
-		$indicators = array_map( $this->doReplacementsHtml( ... ), $out->getIndicators() );
+		$indicators = array_map( [ $this, 'doReplacementsHtml' ], $out->getIndicators() );
 		$out->setIndicators( $indicators );
 
 		$out->addModules( 'ext.XSSProtector.init' );

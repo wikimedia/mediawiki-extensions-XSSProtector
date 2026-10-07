@@ -7,7 +7,7 @@
 	"url": "https://www.mediawiki.org/wiki/Extension:XSSProtector",
 	"description": "Extension to add an extra layer of protection against XSS attacks",
 	"requires": {
-		"MediaWiki": ">= 1.39"
+		"MediaWiki": ">= 1.39.12"
 	},
 	"license-name": "GPL-2.0-or-later",
 	"type": "other",
